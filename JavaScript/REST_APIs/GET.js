@@ -17,12 +17,12 @@ const basicGETMethod = async (apiEndPoint) => {
 			responseCode = data.status;
 			await forceProcessSleep(3000 * retryCounter);
 			generalLogger.error(
-				`basicGETMethod Func - Looping ERROR. Endpoint = ${apiEndPoint}. Response code = ${responseCode}. Error Msg = ${data.message}. Retrying on ${retryCounter} / 3 time.`
+				`basicGETMethod Func - Looping ERROR. Endpoint = ${apiEndPoint}. Response code = ${responseCode}. Error Msg = ${data.message}. Retrying on ${retryCounter} / 3.`
 			);
 			retryCounter++;
 		} while (responseCode && responseCode !== 200 && retryCounter <= 3);
 
-		generalLogger.error(`basicGETMethod Func error not resolved after 3 times retries!!!`);
+		generalLogger.error(`basicGETMethod Func ERROR not resolved after 3 times retries!!!`);
 		return false;
 	} catch (error) {
 		generalLogger.error(`basicGETMethod Func ${error}`);
@@ -38,7 +38,7 @@ const getMethodLookupModel = async (apiEndPoint) => {
 		if (!data) return false;
 
 		genesysPayload = data;
-		if (JSON.stringify(genesysPayload) === "{}" || genesysPayload.entities.length === 0) return [];
+		if (JSON.stringify(genesysPayload) === "{}" || genesysPayload.entities.length === 0) return false;
 		let fullPayload = genesysPayload.entities;
 
 		//Sometimes payload exceed one page
