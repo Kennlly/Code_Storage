@@ -18,7 +18,7 @@ const basicPOSTMethod = async (apiEndPoint, apiQueryBody) => {
 			responseCode = data.status;
 			await forceProcessSleep(3000 * retryCounter);
 			generalLogger.error(
-				`basicPOSTMethod Func - Looping ERROR. Endpoint = ${apiEndPoint}. Response code = ${responseCode}. Error Msg = ${data.message}. Retrying on ${retryCounter} / 3 time.`
+				`basicPOSTMethod Func - Looping ERROR. Endpoint = ${apiEndPoint}. Response code = ${responseCode}. Error Msg = ${data.message}. Retrying on ${retryCounter} / 3.`
 			);
 			retryCounter++;
 		} while (responseCode && responseCode !== 200 && retryCounter <= 3);
