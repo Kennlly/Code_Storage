@@ -46,7 +46,7 @@ const createPool = async (poolName) => {
 					poolInfo: connectionResult,
 				});
 			} catch (err) {
-				generalLogger.error(`createPool Func - looping ${err}. Retrying ${retryCounter} / 3 times.`);
+				generalLogger.error(`createPool Func - looping ${err}. Retrying on ${retryCounter} / 3.`);
 				await forceProcessSleep(10000 * retryCounter);
 				retryCounter++;
 			}
@@ -95,13 +95,12 @@ const parseJSONIntoDB = async (databasePoolInfo, procedureName, queryValue) => {
 	try {
 		const databaseQuery = `EXEC ${procedureName} @genesysPayload = N'${queryValue}'`;
 		const result = await databasePoolInfo.query(databaseQuery);
-		if (!result.recordset[0].hasOwnProperty("Succeed")) {
-			generalLogger.error(
-				`Execute database procedure ${procedureName} ERROR Msg from database: ${result.recordset[0].ErrorMsg}.`
-			);
-			return false;
-		}
-		return true;
+		if (result.recordset[0].hasOwnProperty("Succeed")) return true;
+
+		generalLogger.error(
+			`Execute database procedure ${procedureName} ERROR Msg from database: ${result.recordset[0].ErrorMsg}.`
+		);
+		return false;
 	} catch (err) {
 		generalLogger.error(`Execute database procedure ${procedureName} ${err}. QueryValue = ${queryValue}`);
 		return false;
