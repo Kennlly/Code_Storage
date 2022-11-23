@@ -44,7 +44,8 @@ const getMethodLookupModel = async (apiEndPoint) => {
 		//Sometimes payload exceed one page
 		while (genesysPayload.nextUri) {
 			try {
-				const data = await basicGETMethod(genesysPayload.nextUri);
+				const fullURL = `${GENESYS_ENDPOINT_URL}${genesysPayload.nextUri}`;
+				const data = await basicGETMethod(fullURL);
 				if (!data) return false;
 
 				fullPayload.push(data.entities);
@@ -52,7 +53,7 @@ const getMethodLookupModel = async (apiEndPoint) => {
 				genesysPayload = data;
 				await forceProcessSleep(2000);
 			} catch (err) {
-				generalLogger.error(`getMethodLookupModel Func - Looping "nextUri" ${err}. API endpoint = ${genesysPayload.nextUri}`);
+				generalLogger.error(`getMethodLookupModel Func - Looping "nextUri" ${err}. API endpoint = ${fullURL}`);
 				return false;
 			}
 		}
