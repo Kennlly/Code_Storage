@@ -15,10 +15,14 @@ const basicGETMethod = async (apiEndPoint) => {
 			if (!data.status) return data;
 
 			responseCode = data.status;
-			await forceProcessSleep(3000 * retryCounter);
 			generalLogger.error(
 				`basicGETMethod Func - Looping ERROR. Endpoint = ${apiEndPoint}. Response code = ${responseCode}. Error Msg = ${data.message}. Retrying on ${retryCounter} / 3.`
 			);
+			if (responseCode === 429) {
+				await forceProcessSleep(60000 * retryCounter);
+			} else {
+				await forceProcessSleep(3000 * retryCounter);
+			}
 			retryCounter++;
 		} while (responseCode && responseCode !== 200 && retryCounter <= 3);
 
