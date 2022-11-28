@@ -29,7 +29,7 @@ const basicGETMethod = async (apiEndPoint) => {
 			retryCounter++;
 		} while (errorCode && errorCode !== 200 && retryCounter <= 3);
 
-		generalLogger.error(`basicGETMethod Func ERROR ERROR after 3 times retries!!!`);
+		generalLogger.error(`basicGETMethod Func ERROR after 3 times retries!!!`);
 		return false;
 	} catch (error) {
 		generalLogger.error(`basicGETMethod Func ${error}. APIEndPoint = ${apiEndPoint}`);
