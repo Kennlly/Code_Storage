@@ -1,6 +1,6 @@
 const basicGETMethod = async (apiEndPoint) => {
 	try {
-		let responseCode = null;
+		let errorCode = null;
 		let retryCounter = 1;
 		do {
 			const genesysToken = await generateValidToken();
@@ -11,25 +11,28 @@ const basicGETMethod = async (apiEndPoint) => {
 					Authorization: `bearer ${genesysToken}`,
 				},
 			});
-			const data = await response.json();
-			if (!data.status) return data;
 
-			responseCode = data.status;
-			generalLogger.error(
-				`basicGETMethod Func - Looping ERROR. Endpoint = ${apiEndPoint}. Response code = ${responseCode}. Error Msg = ${data.message}. Retrying on ${retryCounter} / 3.`
-			);
-			if (responseCode === 429) {
-				await forceProcessSleep(60000 * retryCounter);
+			const isSucceed = response.ok;
+			const jsonResponse = await response.json();
+			if (isSucceed) return jsonResponse;
+
+			const errorMsg = jsonResponse.message;
+			const errorCode = jsonResponse.status;
+			if (errorCode === 429) {
+				await forceProcessSleep(120000 * retryCounter);
 			} else {
+				generalLogger.error(
+					`basicGETMethod Func - Looping ERROR. Endpoint = ${apiEndPoint}. Response code = ${errorCode}. Error Msg = ${errorMsg}. Retrying on ${retryCounter} / 3.`
+				);
 				await forceProcessSleep(3000 * retryCounter);
 			}
 			retryCounter++;
-		} while (responseCode && responseCode !== 200 && retryCounter <= 3);
+		} while (errorCode && errorCode !== 200 && retryCounter <= 3);
 
-		generalLogger.error(`basicGETMethod Func ERROR not resolved after 3 times retries!!!`);
+		generalLogger.error(`basicGETMethod Func ERROR ERROR after 3 times retries!!!`);
 		return false;
 	} catch (error) {
-		generalLogger.error(`basicGETMethod Func ${error}`);
+		generalLogger.error(`basicGETMethod Func ${error}. APIEndPoint = ${apiEndPoint}`);
 		return false;
 	}
 };
