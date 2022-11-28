@@ -1,6 +1,5 @@
 const basicPOSTMethod = async (apiEndPoint, apiQueryBody) => {
 	try {
-		let errorCode = null;
 		let retryCounter = 1;
 		do {
 			const genesysToken = await generateValidToken();
@@ -30,7 +29,7 @@ const basicPOSTMethod = async (apiEndPoint, apiQueryBody) => {
 				await forceProcessSleep(3000 * retryCounter);
 			}
 			retryCounter++;
-		} while (errorCode && errorCode !== 200 && retryCounter <= 3);
+		} while (retryCounter <= 3);
 
 		generalLogger.error(`basicPOSTMethod Func ERROR after 3 times retries!!!`);
 		return false;

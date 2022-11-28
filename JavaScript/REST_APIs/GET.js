@@ -1,6 +1,5 @@
 const basicGETMethod = async (apiEndPoint) => {
 	try {
-		let errorCode = null;
 		let retryCounter = 1;
 		do {
 			const genesysToken = await generateValidToken();
@@ -27,7 +26,7 @@ const basicGETMethod = async (apiEndPoint) => {
 				await forceProcessSleep(3000 * retryCounter);
 			}
 			retryCounter++;
-		} while (errorCode && errorCode !== 200 && retryCounter <= 3);
+		} while (retryCounter <= 3);
 
 		generalLogger.error(`basicGETMethod Func ERROR after 3 times retries!!!`);
 		return false;
