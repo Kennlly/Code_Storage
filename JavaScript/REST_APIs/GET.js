@@ -1,3 +1,6 @@
+//npm node-fetch
+import fetch from "node-fetch";
+
 const basicGETMethod = async (apiEndPoint) => {
 	try {
 		let retryCounter = 1;
@@ -18,20 +21,22 @@ const basicGETMethod = async (apiEndPoint) => {
 			const errorMsg = jsonResponse.message;
 			const errorCode = jsonResponse.status;
 			if (errorCode === 429) {
+				generalLogger.warn(
+					`basicGETMethod Func - Requesting too frequently. Endpoint = ${apiEndPoint}. Retrying on ${retryCounter} / 3.`
+				);
 				await forceProcessSleep(120000 * retryCounter);
 			} else {
 				generalLogger.error(
-					`basicGETMethod Func - Looping ERROR. Endpoint = ${apiEndPoint}. Response code = ${errorCode}. Error Msg = ${errorMsg}. Retrying on ${retryCounter} / 3.`
+					`basicGETMethod Func - Requesting ERROR. Endpoint = ${apiEndPoint}. Response code = ${errorCode}. Error Msg = ${errorMsg}. Retrying on ${retryCounter} / 3.`
 				);
 				await forceProcessSleep(3000 * retryCounter);
 			}
 			retryCounter++;
 		} while (retryCounter <= 3);
 
-		generalLogger.error(`basicGETMethod Func ERROR after 3 times retries!!!`);
 		return false;
-	} catch (error) {
-		generalLogger.error(`basicGETMethod Func ${error}. APIEndPoint = ${apiEndPoint}`);
+	} catch (err) {
+		generalLogger.error(`basicGETMethod Func ${err}. APIEndPoint = ${apiEndPoint}`);
 		return false;
 	}
 };
@@ -57,15 +62,14 @@ const getMethodLookupModel = async (apiEndPoint) => {
 				fullPayload.push(data.entities);
 				fullPayload = fullPayload.flat();
 				genesysPayload = data;
-				await forceProcessSleep(2000);
 			} catch (err) {
-				generalLogger.error(`getMethodLookupModel Func - Looping "nextUri" ${err}. API endpoint = ${fullURL}`);
+				LookupsLogger.error(`getMethodLookupModel Func - Requesting "nextUri" ${err}. API endpoint = ${fullURL}`);
 				return false;
 			}
 		}
 		return fullPayload;
 	} catch (err) {
-		generalLogger.error(`getMethodLookupModel Func ${err}. API endpoint = ${apiEndPoint}`);
+		LookupsLogger.error(`getMethodLookupModel Func ${err}. API endpoint = ${apiEndPoint}`);
 		return false;
 	}
 };

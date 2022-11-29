@@ -8,7 +8,7 @@ const getFileList = async (folderPath) => {
 
 		return fileList;
 	} catch (err) {
-		generalLogger.error(`getFileList Func ${err}`);
+		generalLogger.error(`getFileList Func ${err}. FolderPath = ${folderPath}`);
 		return false;
 	}
 };

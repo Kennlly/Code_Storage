@@ -52,10 +52,9 @@ const createPool = async (poolName) => {
 			}
 		} while (retryCounter <= 3);
 
-		generalLogger.error(`createPool Func - connection error after 3 times retries!!!`);
 		return false;
 	} catch (err) {
-		generalLogger.error(`createPool Func ${err}`);
+		generalLogger.error(`createPool Func ${err}.`);
 		return false;
 	}
 };
@@ -76,7 +75,7 @@ const closePool = async (name) => {
 		generalLogger.error(`Database Pool Closed ERROR, Pool Name = ${name}`);
 		return false;
 	} catch (err) {
-		generalLogger.error(`closePool Func ${err}`);
+		generalLogger.error(`closePool Func ${err}.`);
 		return false;
 	}
 };
@@ -86,7 +85,7 @@ const basicDBQuery = async (databasePoolInfo, databaseQuery) => {
 		const result = await databasePoolInfo.query(databaseQuery);
 		return result;
 	} catch (err) {
-		generalLogger.error(`basicDBQuery Func ${err}`);
+		generalLogger.error(`basicDBQuery Func ${err}.`);
 		return false;
 	}
 };

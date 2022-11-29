@@ -41,7 +41,9 @@ const asyncWritingFile = async (category, fileName, content) => {
 		generalLogger.info(`Writing ${fileName}.${category} SUCCEED!`);
 		return true;
 	} catch (err) {
-		generalLogger.error(`asyncWritingFile Func ${err}`);
+		generalLogger.error(
+			`asyncWritingFile Func ${err}. Category = ${category}. FileName = ${fileName}. Content = ${JSON.stringify(content)}`
+		);
 		return false;
 	}
 };

@@ -30,7 +30,7 @@ const zipLogFiles = async (logCategory) => {
 		generalLogger.info(`Zip and Remove files for log files - ${logCategory} for ${backwardOneMonthDateStr} COMPLETED!`);
 		return true;
 	} catch (err) {
-		generalLogger.error(`zipLogFiles Func ${err}`);
+		generalLogger.error(`zipLogFiles Func ${err}. LogCategory = ${logCategory}`);
 		return false;
 	}
 };
