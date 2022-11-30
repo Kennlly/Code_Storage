@@ -80,13 +80,12 @@ const closePool = async (name) => {
 	}
 };
 
-const basicDBQuery = async (databasePoolInfo, databaseQuery) => {
+const basicDBQuery = async (dbPoolInfo, dbQuery) => {
 	try {
-		const result = await databasePoolInfo.query(databaseQuery);
+		const result = await dbPoolInfo.query(dbQuery);
 		return result;
 	} catch (err) {
-		generalLogger.error(`basicDBQuery Func ${err}.`);
-		return false;
+		generalLogger.error(`basicDBQuery Func ${err}. Database Query = ${dbQuery}`);
 	}
 };
 
