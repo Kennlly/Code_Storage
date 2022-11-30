@@ -82,7 +82,7 @@ const asyncReadingFile = async (category, fileName) => {
 			generalLogger.error(`Converting ${fileName}.${category} ${err}`);
 		}
 	} catch (err) {
-		generalLogger.error(`asyncReadingFile Func ${err}`);
+		generalLogger.error(`asyncReadingFile Func ${err}. Category = ${category}, FileName = ${fileName}`);
 		return false;
 	}
 };
