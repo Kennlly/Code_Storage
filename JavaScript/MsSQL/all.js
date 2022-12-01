@@ -40,7 +40,6 @@ const createPool = async (poolName) => {
 		do {
 			try {
 				const connectionResult = await new ConnectionPool(config).connect();
-				generalLogger.info(`Database Pool Created Successfully, Pool Name = ${newPoolName}`);
 				return (pools[newPoolName] = {
 					poolName: newPoolName,
 					poolInfo: connectionResult,
@@ -67,10 +66,7 @@ const closePool = async (name) => {
 		const pool = pools[name].poolInfo;
 		delete pools[name];
 		const result = await pool.close();
-		if (result._connecting === false) {
-			generalLogger.info(`Database Pool Closed Successfully, Pool Name = ${name}`);
-			return true;
-		}
+		if (result._connecting === false) return true;
 
 		generalLogger.error(`Database Pool Closed ERROR, Pool Name = ${name}`);
 		return false;
@@ -86,6 +82,7 @@ const basicDBQuery = async (dbPoolInfo, dbQuery) => {
 		return result;
 	} catch (err) {
 		generalLogger.error(`basicDBQuery Func ${err}. Database Query = ${dbQuery}`);
+		return false;
 	}
 };
 
