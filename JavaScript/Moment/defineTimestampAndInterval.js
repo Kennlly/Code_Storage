@@ -40,12 +40,13 @@ const defineQueryStartTimestamp = async (timestamp) => {
 	}
 };
 
+//The last interval is in half-hour even greater than the original endTimestamp
 const defineIntervalAsHalfHour = (startTimestamp, endTimestamp) => {
 	//The start and end timestamp have already been adjusted to ??:00:00 or ??:30:00
 	try {
 		const momentStartTime = moment(startTimestamp, "YYYY-MM-DDTHH:mm:ss.SSS[Z]");
 		const momentEndTime = moment(endTimestamp, "YYYY-MM-DDTHH:mm:ss.SSS[Z]");
-		const timeDiff = moment(momentEndTime).diff(momentStartTime);
+		const timeDiff = moment(momentEndTime).diff(momentStartTime, "minute");
 		if (timeDiff <= 30) return [`${startTimestamp}/${endTimestamp}`];
 
 		let forwardingStartTime = momentStartTime.clone();
@@ -59,8 +60,36 @@ const defineIntervalAsHalfHour = (startTimestamp, endTimestamp) => {
 		}
 		return definedIntervalArr;
 	} catch (err) {
-		SALogger.error(
-			`separateIntervalIntoHalfHour Func ${err}. Starttimestamp = ${startTimestamp}, Endtimestamp = ${endTimestamp}`
+		SALogger.error(`defineIntervalAsHalfHour Func ${err}. Starttimestamp = ${startTimestamp}, Endtimestamp = ${endTimestamp}`);
+		return false;
+	}
+};
+
+//The last interval is lastForwardingStartTime till the origianl endTimestamp
+const defineIntervalAsQuater = (startTimestamp, endTimestamp) => {
+	try {
+		const momentStartTime = moment(startTimestamp, "YYYY-MM-DD HH:mm");
+		const momentEndTime = moment(endTimestamp, "YYYY-MM-DD HH:mm");
+		const timeDiff = moment(momentEndTime).diff(momentStartTime, "minute");
+		if (timeDiff <= 15) return [`${startTimestamp}/${endTimestamp}`];
+
+		let forwardingStartTime = momentStartTime.clone();
+		let forwardingEndTime = forwardingStartTime.clone().add(15, "minute");
+		let definedIntervalArr = [];
+		while (forwardingEndTime < momentEndTime) {
+			const startTimeStr = forwardingStartTime.format("YYYY-MM-DD HH:mm");
+			const endTimeStr = forwardingEndTime.format("YYYY-MM-DD HH:mm");
+			definedIntervalArr.push(`${startTimeStr}/${endTimeStr}`);
+			forwardingStartTime = forwardingEndTime;
+			forwardingEndTime = forwardingStartTime.clone().add(15, "minute");
+		}
+
+		const farwordingStartTimeStr = forwardingStartTime.format("YYYY-MM-DD HH:mm");
+		definedIntervalArr.push(`${farwordingStartTimeStr}/${endTimestamp}`);
+		return definedIntervalArr;
+	} catch (err) {
+		generalLogger.error(
+			`defineIntervalAsQuater Func ${err}. Starttimestamp = ${startTimestamp}, Endtimestamp = ${endTimestamp}`
 		);
 		return false;
 	}
