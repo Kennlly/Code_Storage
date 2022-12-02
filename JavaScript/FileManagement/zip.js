@@ -6,6 +6,8 @@ const zipLogFiles = async (logCategory) => {
 	try {
 		const folderPath = `${LOG_FILEPATH}${logCategory}${path.sep}`;
 		const fileListArr = await getFileList(folderPath);
+		if (!fileListArr) return true;
+
 		const backwardOneMonthDateStr = moment().subtract(1, "month").format("YYYY-MM");
 		const filteredResult = fileListArr.filter((fileName) => {
 			const fileDate = fileName.split(".")[0];
@@ -39,6 +41,8 @@ const zipDataStorageFiles = async (category) => {
 	try {
 		const folderPath = `${DATASTORAGE_FILEPATH}${category}${path.sep}`;
 		const fileListArr = await getFileList(folderPath);
+		if (!fileListArr) return true;
+
 		const backwardSevenDaysTimestamp = moment().subtract(7, "day").format("YYYY-MM-DD");
 		const filteredResult = fileListArr.filter((fileName) => {
 			const index = fileName.indexOf("T");
@@ -63,7 +67,7 @@ const zipDataStorageFiles = async (category) => {
 		});
 		return true;
 	} catch (err) {
-		generalLogger.error(`zipLogFiles Func ${err}. Category = ${category}`);
+		generalLogger.error(`zipDataStorageFiles Func ${err}. Category = ${category}`);
 		return false;
 	}
 };
