@@ -6,6 +6,11 @@ const basicPOSTMethod = async (apiEndPoint, apiQueryBody) => {
 		let retryCounter = 1;
 		do {
 			const genesysToken = await generateValidToken();
+			if (!genesysToken) {
+				generalLogger.error(`basicPOSTMethod Func - Generate genesys token ERROR!`);
+				return false;
+			}
+
 			const response = await fetch(apiEndPoint, {
 				method: "POST",
 				headers: {
