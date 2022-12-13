@@ -51,12 +51,11 @@ const readJSONFile = async (fileName) => {
 
 const asyncReadingFile = async (category, fileName) => {
 	//handle writing txt or json file
-	let filePath = -1;
-	try {
-		if (category !== "json" && category !== "txt") throw new Error(`Only input "json" or "txt" as reading file format!`);
+	if (category !== "json" && category !== "txt") throw new Error(`Only input "json" or "txt" as reading file format!`);
 
+	const filePath = `${INFO_FILEPATH}${fileName}.${category}`;
+	try {
 		if (category === "json") {
-			filePath = `${JSON_FILEPATH}${fileName}.${category}`;
 			const isJSONFileExist = await isFileExist(filePath);
 			if (!isJSONFileExist) {
 				generalLogger.error(`File ${filePath} is NOT exist!`);
@@ -64,7 +63,6 @@ const asyncReadingFile = async (category, fileName) => {
 				return {};
 			}
 		} else {
-			filePath = `${TXT_FILEPATH}${fileName}.${category}`;
 			const isTXTFileExist = await isFileExist(filePath);
 			if (!isTXTFileExist) {
 				generalLogger.error(`File ${filePath} is NOT exist!`);
@@ -79,10 +77,11 @@ const asyncReadingFile = async (category, fileName) => {
 		try {
 			return JSON.parse(data);
 		} catch (err) {
-			generalLogger.error(`Converting ${fileName}.${category} ${err}`);
+			generalLogger.error(`asyncReadingFile Func - Converting ${fileName}.json ${err}.`);
+			return false;
 		}
 	} catch (err) {
-		generalLogger.error(`asyncReadingFile Func ${err}. Category = ${category}, FileName = ${fileName}`);
+		generalLogger.error(`asyncReadingFile Func ${err}. Category = ${category}. FileName = ${fileName}.`);
 		return false;
 	}
 };
