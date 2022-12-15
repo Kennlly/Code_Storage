@@ -88,7 +88,7 @@ const basicDBQuery = async (dbPoolInfo, dbQuery) => {
 
 const parseJSONIntoDB = async (databasePoolInfo, procedureName, queryValue) => {
 	try {
-		const databaseQuery = `EXEC ${procedureName} @genesysPayload = N'${queryValue}'`;
+		const databaseQuery = `EXEC ${procedureName} @genesysPayload = N'${JSON.stringify(queryValue)}'`;
 		const result = await databasePoolInfo.query(databaseQuery);
 		if (result.recordset[0].hasOwnProperty("Succeed")) return true;
 
@@ -97,7 +97,7 @@ const parseJSONIntoDB = async (databasePoolInfo, procedureName, queryValue) => {
 		);
 		return false;
 	} catch (err) {
-		generalLogger.error(`Execute database procedure ${procedureName} ${err}. QueryValue = ${queryValue}`);
+		generalLogger.error(`Execute database procedure ${procedureName} ${err}. QueryValue = ${JSON.stringify(queryValue)}`);
 		return false;
 	}
 };
