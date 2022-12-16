@@ -81,7 +81,7 @@ const basicDBQuery = async (dbPoolInfo, dbQuery) => {
 		const result = await dbPoolInfo.query(dbQuery);
 		return result;
 	} catch (err) {
-		generalLogger.error(`basicDBQuery Func ${err}. Database Query = ${dbQuery}`);
+		generalLogger.error(`basicDBQuery Func ${err}. Database Query = ${JSON.stringify(dbQuery)}`);
 		return false;
 	}
 };
