@@ -22,18 +22,18 @@ const writeTXTFile = async (fileName, content) => {
 	}
 };
 
-const asyncWritingFile = async (category, fileName, content) => {
+const asyncWritingFile = async (fileFormat, fileName, content) => {
 	//handle writing txt or json file
-	if (category !== "json" && category !== "txt") throw new Error(`Only input "json" or "txt" as writing file format!`);
+	if (fileFormat !== "json" && fileFormat !== "txt") throw new Error(`Only input "json" or "txt" as writing file format!`);
 
-	const filePath = `${INFO_FILEPATH}${fileName}.${category}`;
-	const fileContent = category === "json" ? JSON.stringify(content, null, 2) : content;
+	const filePath = `${INFO_FILEPATH}${fileName}.${fileFormat}`;
+	const fileContent = fileFormat === "json" ? JSON.stringify(content, null, 2) : content;
 	try {
 		await fs.writeFile(filePath, fileContent);
 		return true;
 	} catch (err) {
 		generalLogger.error(
-			`asyncWritingFile Func ${err}. Category = ${category}. FileName = ${fileName}. Content = ${JSON.stringify(content)}`
+			`asyncWritingFile Func ${err}. FileFormat = ${fileFormat}. FileName = ${fileName}. Content = ${JSON.stringify(content)}`
 		);
 		return false;
 	}
