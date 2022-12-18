@@ -1,5 +1,8 @@
 //npm i mssql
 import sql from "mssql";
+// import { generalLogger } from "./loggerConfig.js";
+// import { SQL_USER, SQL_PASSWORD, SQL_DATABASE, SQL_SERVER } from "./constants.js";
+// import { forceProcessSleep } from "./generalAPIMethods.js";
 
 const { ConnectionPool } = sql;
 let pools = {};
@@ -51,9 +54,9 @@ const createPool = async (poolName) => {
 			}
 		} while (retryCounter <= 3);
 
-		return false;
+		throw new Error("Connection ERROR after 3 times retries!");
 	} catch (err) {
-		generalLogger.error(`createPool Func ${err}.`);
+		generalLogger.error(`createPool Func ${err}`);
 		return false;
 	}
 };
@@ -68,20 +71,19 @@ const closePool = async (name) => {
 		const result = await pool.close();
 		if (result._connecting === false) return true;
 
-		generalLogger.error(`Database Pool Closed ERROR, Pool Name = ${name}`);
-		return false;
+		throw new Error("Database close ERROR!");
 	} catch (err) {
-		generalLogger.error(`closePool Func ${err}.`);
+		generalLogger.error(`closePool Func ${err} Pool Name = ${name}`);
 		return false;
 	}
 };
 
-const basicDBQuery = async (dbPoolInfo, dbQuery) => {
+const basicDBQuery = async (databasePoolInfo, databaseQuery) => {
 	try {
-		const result = await dbPoolInfo.query(dbQuery);
+		const result = await databasePoolInfo.query(databaseQuery);
 		return result;
 	} catch (err) {
-		generalLogger.error(`basicDBQuery Func ${err}. Database Query = ${JSON.stringify(dbQuery)}`);
+		generalLogger.error(`basicDBQuery Func ${err}. Query value = ${JSON.stringify(databaseQuery)}`);
 		return false;
 	}
 };
@@ -92,12 +94,13 @@ const parseJSONIntoDB = async (databasePoolInfo, procedureName, queryValue) => {
 		const result = await databasePoolInfo.query(databaseQuery);
 		if (result.recordset[0].hasOwnProperty("Succeed")) return true;
 
-		generalLogger.error(
-			`Execute database procedure ${procedureName} ERROR Msg from database: ${result.recordset[0].ErrorMsg}.`
-		);
-		return false;
+		throw new Error(`Error msg from database: ${result.recordset[0].ErrorMsg}.`);
 	} catch (err) {
-		generalLogger.error(`Execute database procedure ${procedureName} ${err}. QueryValue = ${JSON.stringify(queryValue)}`);
+		generalLogger.error(
+			`parseJSONIntoDB Func ${err} ProcedureName = ${procedureName}. Query Value = ${JSON.stringify(queryValue)}`
+		);
 		return false;
 	}
 };
+
+export { createPool, closePool, basicDBQuery, parseJSONIntoDB };

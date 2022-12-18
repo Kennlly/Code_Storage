@@ -6,10 +6,6 @@ const basicPOSTMethod = async (apiEndPoint, apiQueryBody) => {
 		let retryCounter = 1;
 		do {
 			const genesysToken = await generateValidToken();
-			if (!genesysToken) {
-				generalLogger.error(`basicPOSTMethod Func - Generate genesys token ERROR!`);
-				return false;
-			}
 
 			const response = await fetch(apiEndPoint, {
 				method: "POST",
@@ -27,9 +23,7 @@ const basicPOSTMethod = async (apiEndPoint, apiQueryBody) => {
 			const errorMsg = jsonResponse.message;
 			const errorCode = jsonResponse.status;
 			if (errorCode === 429) {
-				generalLogger.warn(
-					`basicPOSTMethod Func - Requesting too frequently. Endpoint = ${apiEndPoint}. Retrying on ${retryCounter} / 3.`
-				);
+				generalLogger.warn(`basicPOSTMethod Func - Requesting too frequently. Retrying on ${retryCounter} / 3.`);
 				await forceProcessSleep(120000 * retryCounter);
 			} else {
 				generalLogger.error(
@@ -42,7 +36,7 @@ const basicPOSTMethod = async (apiEndPoint, apiQueryBody) => {
 			retryCounter++;
 		} while (retryCounter <= 3);
 
-		return false;
+		throw new Error("ERROR after 3 times retries!");
 	} catch (err) {
 		generalLogger.error(
 			`basicPOSTMethod Func ${err}. APIEndPoint = ${apiEndPoint}, ApiQueryBody = ${JSON.stringify(apiQueryBody)}.`

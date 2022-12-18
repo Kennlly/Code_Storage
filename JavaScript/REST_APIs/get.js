@@ -6,10 +6,6 @@ const basicGETMethod = async (apiEndPoint) => {
 		let retryCounter = 1;
 		do {
 			const genesysToken = await generateValidToken();
-			if (!genesysToken) {
-				generalLogger.error(`basicGETMethod Func - Generate genesys token ERROR!`);
-				return false;
-			}
 
 			const response = await fetch(apiEndPoint, {
 				method: "GET",
@@ -26,9 +22,7 @@ const basicGETMethod = async (apiEndPoint) => {
 			const errorMsg = jsonResponse.message;
 			const errorCode = jsonResponse.status;
 			if (errorCode === 429) {
-				generalLogger.warn(
-					`basicGETMethod Func - Requesting too frequently. Endpoint = ${apiEndPoint}. Retrying on ${retryCounter} / 3.`
-				);
+				generalLogger.warn(`basicGETMethod Func - Requesting too frequently. Retrying on ${retryCounter} / 3.`);
 				await forceProcessSleep(120000 * retryCounter);
 			} else {
 				generalLogger.error(
@@ -39,9 +33,9 @@ const basicGETMethod = async (apiEndPoint) => {
 			retryCounter++;
 		} while (retryCounter <= 3);
 
-		return false;
+		throw new Error("ERROR after 3 times retries!");
 	} catch (err) {
-		generalLogger.error(`basicGETMethod Func ${err}. APIEndPoint = ${apiEndPoint}`);
+		generalLogger.error(`basicGETMethod Func ${err} APIEndPoint = ${apiEndPoint}`);
 		return false;
 	}
 };
