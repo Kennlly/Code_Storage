@@ -3,7 +3,7 @@ const getFileList = async (folderPath) => {
 		const fileList = await fs.readdir(folderPath);
 		if (fileList.length === 0) {
 			generalLogger.info(`There is no files in the ${folderPath} folder.`);
-			return false;
+			return true;
 		}
 
 		return fileList;

@@ -6,7 +6,7 @@ const zipLogFiles = async (logCategory) => {
 	try {
 		const folderPath = `${LOG_FILEPATH}${logCategory}${path.sep}`;
 		const fileListArr = await getFileList(folderPath);
-		if (!fileListArr) return true;
+		if (typeof fileListArr === "boolean") return fileListArr;
 
 		const backwardOneMonthDateStr = moment().subtract(1, "month").format("YYYY-MM");
 		const filteredResult = fileListArr.filter((fileName) => {
@@ -15,7 +15,7 @@ const zipLogFiles = async (logCategory) => {
 			return fileYearMonthStr === backwardOneMonthDateStr;
 		});
 		if (filteredResult.length === 0) {
-			generalLogger.info(`There is no log files - ${logCategory} for ${backwardOneMonthDateStr} to be zipped.`);
+			generalLogger.info(`There is no log files for ${backwardOneMonthDateStr} to be zipped.`);
 			return true;
 		}
 
@@ -26,9 +26,10 @@ const zipLogFiles = async (logCategory) => {
 		//Remove the files
 		filteredResult.forEach(async (file) => {
 			const result = await removeFile(`${folderPath}${file}`);
-			if (!result) generalLogger.error(`Remove file ${folderPath}${file} occurs error!`);
+			if (!result) throw new Error(`Remove file ${folderPath}${file} occurs error!`);
 		});
 
+		generalLogger.info(`Zip and Remove files for log files - ${logCategory} for ${backwardOneMonthDateStr} COMPLETED!`);
 		return true;
 	} catch (err) {
 		generalLogger.error(`zipLogFiles Func ${err}. LogCategory = ${logCategory}`);
@@ -41,7 +42,7 @@ const zipDataStorageFiles = async (category) => {
 	try {
 		const folderPath = `${DATASTORAGE_FILEPATH}${category}${path.sep}`;
 		const fileListArr = await getFileList(folderPath);
-		if (!fileListArr) return true;
+		if (typeof fileListArr === "boolean") return fileListArr;
 
 		const backwardSevenDaysTimestamp = moment().subtract(7, "day").format("YYYY-MM-DD");
 		const filteredResult = fileListArr.filter((fileName) => {
@@ -63,7 +64,7 @@ const zipDataStorageFiles = async (category) => {
 		//Remove the files
 		filteredResult.forEach(async (file) => {
 			const result = await removeFile(`${folderPath}${file}`);
-			if (!result) generalLogger.error(`Remove file ${folderPath}${file} occurs error!`);
+			if (!result) throw new Error(`Remove file ${folderPath}${file} occurs error!`);
 		});
 		return true;
 	} catch (err) {

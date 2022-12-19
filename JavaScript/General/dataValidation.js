@@ -18,10 +18,7 @@ const validateStr = (
 		if (isValidatingID) {
 			if (sourceData.length === expectedLength) return sourceData;
 
-			modelLogger.error(
-				`Error data! Column Name = ${columnName}. Note: ${primaryKeyNote}. Problem String(NOT UUID) = ${sourceData}.`
-			);
-			return null;
+			throw new Error("Error data - Problem String(NOT UUID)");
 		}
 
 		const validatingStr = sourceData.replace(/'/g, "''").replace(/\n/g, " ");
@@ -49,10 +46,7 @@ const validateMsSQLInt = (
 		const isNumber = isNaN(sourceData) === false;
 		if (sourceData >= 0 && sourceData <= 2147483647 && isNumber) return sourceData;
 
-		modelLogger.error(
-			`Error data! Column Name = ${columnName}. Note: ${primaryKeyNote}. Problem Integer(It's NOT a MsSQL INT) = ${sourceData}.`
-		);
-		return null;
+		throw new Error(`Error data - Problem Integer(It's NOT a MsSQL INT)`);
 	} catch (err) {
 		modelLogger.error(
 			`validateMsSQLInt Func ${err}. SourceData = ${sourceData}, ColumnName = ${columnName}, PrimaryKeyNote = ${primaryKeyNote}.`
@@ -73,8 +67,7 @@ const validateNumber = (
 		const isNumber = isNaN(sourceData) === false;
 		if (isNumber) return sourceData;
 
-		modelLogger.error(`Error data! Column Name = ${columnName}. Note: ${primaryKeyNote}. Problem Integer = ${sourceData}.`);
-		return null;
+		throw new Error("Error data");
 	} catch (err) {
 		modelLogger.error(
 			`validateNumber Func ${err}. SourceData = ${sourceData}, ColumnName = ${columnName}, PrimaryKeyNote = ${primaryKeyNote}.`
@@ -92,10 +85,8 @@ const validateBool = (
 		if (sourceData === undefined || sourceData === null || sourceData.length === 0) return null;
 
 		if (typeof sourceData === "boolean") return sourceData;
-		modelLogger.error(
-			`Error data! Column Name = ${columnName}. Note: ${primaryKeyNote}. Problem String(NOT Boolean) = ${sourceData}.`
-		);
-		return null;
+
+		throw new Error(`Error data - Problem String(NOT Boolean)`);
 	} catch (err) {
 		modelLogger.error(
 			`validateBool Func ${err}. SourceData = ${sourceData}, ColumnName = ${columnName}, PrimaryKeyNote = ${primaryKeyNote}.`
@@ -118,10 +109,7 @@ const validateDate = (
 		const isValidDateStr = parseMomentDateStr.isValid();
 		if (isValidDateStr) return sourceData;
 
-		modelLogger.error(
-			`Error data!  Column Name = ${columnName}. Note: ${primaryKeyNote}. Problem Date String = ${sourceData}.`
-		);
-		return null;
+		throw new Error("Error data");
 	} catch (err) {
 		modelLogger.error(
 			`validateDate Func ${err}. SourceData = ${sourceData}, ColumnName = ${columnName}, PrimaryKeyNote = ${primaryKeyNote}.`
