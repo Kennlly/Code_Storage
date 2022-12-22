@@ -77,8 +77,7 @@ const asyncReadingFile = async (category, fileName) => {
 		try {
 			return JSON.parse(data);
 		} catch (err) {
-			generalLogger.error(`asyncReadingFile Func - Converting ${fileName}.json ${err}.`);
-			return false;
+			throw new Error(`Converting to json ${err}.`);
 		}
 	} catch (err) {
 		generalLogger.error(`asyncReadingFile Func ${err}. Category = ${category}. FileName = ${fileName}.`);
