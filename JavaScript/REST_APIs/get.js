@@ -21,7 +21,9 @@ const basicGETMethod = async (apiEndPoint) => {
 
 			const errorMsg = jsonResponse.message;
 			const errorCode = jsonResponse.status;
-			if (errorCode === 429) {
+			if (errorCode === 403) {
+				throw new Error(`Response code = ${errorCode}. Error Msg = ${errorMsg}`);
+			} else if (errorCode === 429) {
 				generalLogger.warn(`basicGETMethod Func - Requesting too frequently. Retrying on ${retryCounter} / 3.`);
 				await forceProcessSleep(120000 * retryCounter);
 			} else {
